@@ -4,6 +4,7 @@
 #include <map>
 #include <sstream>
 #include "lexer.cpp"
+#include "parser.cpp"
 using namespace std;
 
 int main(const int argc, const char* const argv[]) {
@@ -24,12 +25,22 @@ int main(const int argc, const char* const argv[]) {
   ofstream out;
   out.open(outname.c_str(), fstream::binary);
 
-  // Label assignment
+  // Read program
   map<string, unsigned long> labels;
   list<Instruction> program = lex(in, labels);
 
 
   // Translation
+  for (list<Instruction>::iterator it=program.begin();
+      it != program.end(); it++) {
+    try {
+      out << parse(*it, labels);
+    }
+    catch (int e) {
+      cerr << "Cannot assemble the assembly code at line " << e <<endl;
+    }
+  }
+
 
   in.close();
 }

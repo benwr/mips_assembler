@@ -1,3 +1,6 @@
+#ifndef LEXER_H
+#define LEXER_H
+
 #include <iostream>
 #include <sstream>
 #include <list>
@@ -9,8 +12,8 @@ string extract_label(istream& in);
 string extract_operator(istream& in);
 string extract_argument(istream& in);
 
-class Instruction {
-  public:
+struct Instruction {
+  int line_no;
   string oper;
   string args[3];
 };
@@ -19,18 +22,19 @@ list<Instruction> lex(ifstream& in, map<string, unsigned long>& labels) {
   unsigned long pc = 0x00400000;
   string stringline;
   list<Instruction> result;
+  int line_no = 0;
   while (getline(in, stringline)){
     stringstream line(stringline);
-
+    line_no++;
     strip_leading_whitespace(line);
     string label = extract_label(line);
     if (label.size()) {
       labels[label] = pc;
-      cout << "Label: " << label << endl;
     }
 
     strip_leading_whitespace(line);
     Instruction inst;
+    inst.line_no = line_no;
     inst.oper = extract_operator(line);
 
     if (inst.oper.size()) {
@@ -44,11 +48,6 @@ list<Instruction> lex(ifstream& in, map<string, unsigned long>& labels) {
       }
       result.push_back(inst);
       pc += 4;
-      cout << "Program Counter: " << pc << endl;
-      cout << "Operator: " << inst.oper << endl;
-      cout << "Arg1: " << inst.args[0] << endl;
-      cout << "Arg2: " << inst.args[1] << endl;
-      cout << "Arg3: " << inst.args[2] << endl << endl;
     }
   }
   return result;
@@ -106,6 +105,8 @@ string extract_argument(istream& in) {
   if (c == ',' || 
       c == '#' || 
       (in.rdstate() & (ifstream::eofbit | ifstream::failbit))) {
+    if (c == '#')
+      in.putback(c);
     return string(",");
   } 
   result = extract_argument(in);
@@ -117,3 +118,5 @@ string extract_argument(istream& in) {
 
   return result;
 }
+
+#endif
