@@ -96,7 +96,7 @@ string i_type_parse(Instruction inst, int index, map<string, unsigned long> labe
     t = parse_reg(inst.args[1], inst.line_no);
     i = (parse_label(inst.args[2], inst.line_no, labels) - inst.addr) / 4 - 1;
   }
-  unsigned long int result = ((opcode & 0x2f) << 26) |
+  unsigned long int result = ((opcode & 0x3f) << 26) |
                              ((s & 0x1f) << 21) |
                              ((t & 0x1f) << 16) | 
                              (i & 0xffff);
