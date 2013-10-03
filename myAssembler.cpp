@@ -35,9 +35,12 @@ int main(const int argc, const char* const argv[]) {
       it != program.end(); it++) {
     try {
       out << parse(*it, labels);
-    }
-    catch (int e) {
+    } catch (int e) {
       cerr << "Cannot assemble the assembly code at line " << e <<endl;
+      return 1;
+    } catch (pair<string, int> p) {
+      cerr << "Undefined label " << p.first << " at line " << p.second << endl;
+      return 2;
     }
   }
 

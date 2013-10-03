@@ -16,9 +16,10 @@ struct Instruction {
   int line_no;
   string oper;
   string args[3];
+  unsigned int addr;
 };
 
-list<Instruction> lex(ifstream& in, map<string, unsigned long>& labels) {
+list<Instruction> lex(istream& in, map<string, unsigned long>& labels) {
   unsigned long pc = 0x00400000;
   string stringline;
   list<Instruction> result;
@@ -38,6 +39,7 @@ list<Instruction> lex(ifstream& in, map<string, unsigned long>& labels) {
     inst.oper = extract_operator(line);
 
     if (inst.oper.size()) {
+      inst.addr = pc;
       for (int i = 0; i < 3; i++) {
         strip_leading_whitespace(line);
         inst.args[i] = extract_argument(line);
@@ -104,7 +106,7 @@ string extract_argument(istream& in) {
   char c = in.get();
   if (c == ',' || 
       c == '#' || 
-      (in.rdstate() & (ifstream::eofbit | ifstream::failbit))) {
+      (in.rdstate() & (istream::eofbit | istream::failbit))) {
     if (c == '#')
       in.putback(c);
     return string(",");
