@@ -1,16 +1,24 @@
-#include <iostream>
+/* filename: myAssembler.cpp
+ * author: Ben Weinstein-Raun
+ * date: 10/02/2013
+ * description: This file contains the main method for my MIPS assembler for
+ *    ECE2500: Computer Organization and Architecture. To use this project,
+ *    compile this file and run the resulting binary as specified in the 
+ *    project outline.
+ */
+
 #include <fstream>
 #include <string>
 #include <map>
-#include <sstream>
-#include "lexer.cpp"
-#include "parser.cpp"
+#include "lexer.h"
+#include "parser.h"
+
 using namespace std;
 
 int main(const int argc, const char* const argv[]) {
   // Opening files
   if (argc != 2) {
-    cerr << "Usage: 'myAssembler [filename]'" << endl;
+    cerr << "Usage: 'myAssembler [program name]'" << endl;
     return 1;
   }
   string filename(argv[1]);
@@ -25,27 +33,25 @@ int main(const int argc, const char* const argv[]) {
   ofstream out;
   out.open(outname.c_str(), fstream::binary);
 
-  // Read program
+  // Read program, split it into understandable parts, and find labels.
   map<string, unsigned long> labels;
   list<Instruction> program = lex(in, labels);
 
 
-  // Translation
+  // Translate the tokenized program into hexadecimal values
   for (list<Instruction>::iterator it=program.begin();
       it != program.end(); it++) {
     try {
       out << parse(*it, labels);
     } catch (int e) {
       cerr << "Cannot assemble the assembly code at line " << e <<endl;
-      return 1;
+      break;
     } catch (pair<string, int> p) {
       cerr << "Undefined label " << p.first << " at line " << p.second << endl;
-      return 2;
+      break;
     }
   }
 
-
   in.close();
+  out.close();
 }
-
-
