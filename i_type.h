@@ -53,7 +53,7 @@ string i_type_parse(Instruction inst,
   } else if (i_type_argformats[index] == "rrl") {
     s = parse_reg(inst.args[0], inst.line_no);
     t = parse_reg(inst.args[1], inst.line_no);
-    i = (parse_label(inst.args[2], inst.line_no, labels) - inst.addr) / 4 - 1;
+    i = (parse_label(inst.args[2], inst.line_no, labels) - inst.addr) / 4;
   }
 
   // Mask and shift the fields

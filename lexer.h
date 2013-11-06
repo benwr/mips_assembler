@@ -71,7 +71,7 @@ string extract_label(istream& in) {
   string result("");
   if (c == ':') {
     return string(":");
-  } else if (isalnum(c)) {
+  } else if (isalnum(c) || c == '_' || c == '-') {
     result = extract_label(in);
     if (result.size())
       if (result[0] == ':')

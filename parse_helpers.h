@@ -113,7 +113,7 @@ bool is_number(string arg) {
 bool is_label(string arg) {
   // Determine if a string is composed of alphanumeric digits.
   string::const_iterator it = arg.begin();
-  while (it != arg.end() && isalnum(*it)) it++;
+  while (it != arg.end() && (isalnum(*it) || *it == '_' || *it == '-')) it++;
   return !(arg.empty()) && (it == arg.end());
 }
 
